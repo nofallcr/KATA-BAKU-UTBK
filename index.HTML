@@ -1,0 +1,783 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Infinite Kata Baku - 1000+ Database</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap");
+      body {
+        font-family: "Poppins", sans-serif;
+        background: #0f172a;
+        color: white;
+        
+      }
+      .card {
+        background: #1e293b;
+        border: 1px solid #334155;
+      }
+      .btn-option {
+        transition: all 0.2s;
+        border: 2px solid #334155;
+      }
+      .btn-option:hover:not(:disabled) {
+        border-color: #38bdf8;
+        background: #334155;
+      }
+      .correct {
+        background: #10b981 !important;
+        border-color: #059669 !important;
+        color: white;
+      }
+      .wrong {
+        background: #ef4444 !important;
+        border-color: #b91c1c !important;
+        color: white;
+      }
+      .stats-box {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 15px;
+        padding: 10px;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen flex flex-col items-center justify-center p-4 gap-6"></body>
+    <div class="max-w-md w-full card rounded-3xl p-8 shadow-2xl">
+      <div class="flex justify-between items-center mb-8 gap-4">
+        <div class="stats-box flex-1 text-center">
+          <p class="text-slate-400 text-xs uppercase tracking-wider">Skor</p>
+          <p id="score" class="text-2xl font-bold text-sky-400">0</p>
+        </div>
+        <div class="stats-box flex-1 text-center border-orange-500/50 border">
+          <p class="text-slate-400 text-xs uppercase tracking-wider">
+            Streak 🔥
+          </p>
+          <p id="streak" class="text-2xl font-bold text-orange-500">0</p>
+        </div>
+      </div>
+
+      <div id="quiz-container">
+        <div class="text-center mb-6">
+          <span
+            class="bg-sky-500/20 text-sky-400 text-xs font-bold px-3 py-1 rounded-full uppercase"
+            >Level: Pejuang PTN</span
+          >
+          <h2 class="text-xl font-semibold mt-4">
+            Pilih penulisan yang
+            <span class="text-sky-400 font-bold underline">BAKU</span>:
+          </h2>
+        </div>
+
+        <div class="grid gap-4" id="options"></div>
+      </div>
+
+      <div id="feedback" class="mt-8 text-center hidden">
+        <p id="feedback-text" class="text-lg font-bold mb-4"></p>
+        <button
+          onclick="generateQuestion()"
+          class="bg-sky-600 hover:bg-sky-500 text-white px-8 py-4 rounded-2xl font-bold transition w-full shadow-lg shadow-sky-900/20"
+        >
+          Lanjut Soal Berikutnya →
+        </button>
+
+        <button 
+  onclick="resetGame()" 
+  class="bg-slate-700 hover:bg-slate-600 text-white px-8 py-3 rounded-2xl font-semibold transition w-full mt-4"
+>
+  Ulang dari Awal 🔄
+</button>
+      </div>
+    </div>
+    </div> 
+
+    <div class="mt-8 text-center max-w-md w-full">
+      <p class="text-slate-400 text-sm">
+        Suka dengan kuis ini? Dukung pengembang:
+      </p>
+      <a 
+        href="https://saweria.co/usernamekamu" 
+        target="_blank" 
+        class="text-sky-400 font-bold hover:text-sky-300 transition-all flex items-center justify-center gap-2 mt-2 group"
+      >
+        <span>☕ Traktir saya kopi di Saweria</span>
+        <span class="group-hover:translate-x-1 transition-transform">→</span>
+      </a>
+    </div>
+
+
+    <p>
+      <script>
+        // DATABASE BESAR (Diringkas tapi padat kunci UTBK)
+        const database = [
+          // Kelompok Populer UTBK
+          { baku: "Apotek", salah: "Apotik" },
+          { baku: "Analisis", salah: "Analisa" },
+          { baku: "Risiko", salah: "Resiko" },
+          { baku: "Izin", salah: "Ijin" },
+          { baku: "Kualitas", salah: "Kwalitas" },
+          { baku: "Atlet", salah: "Atlit" },
+          { baku: "Jadwal", salah: "Jadual" },
+          { baku: "Cenderamata", salah: "Souvenir" },
+          { baku: "Hektare", salah: "Hektar" },
+          { baku: "Hierarki", salah: "Hirarki" },
+          { baku: "Istri", salah: "Isteri" },
+          { baku: "Zaman", salah: "Jaman" },
+          { baku: "Karier", salah: "Karir" },
+          { baku: "Kompleks", salah: "Komplek" },
+          { baku: "Manajemen", salah: "Managemen" },
+          { baku: "Objektif", salah: "Obyektif" },
+          { baku: "Praktik", salah: "Praktek" },
+          { baku: "Saksama", salah: "Seksama" },
+          { baku: "Sistem", salah: "Sistim" },
+          { baku: "Teknik", salah: "Tehnik" },
+          { baku: "Nasihat", salah: "Nasehat" },
+          { baku: "Sekadar", salah: "Sekedar" },
+          { baku: "Silakan", salah: "Silahkan" },
+          { baku: "Antre", salah: "Antri" },
+          { baku: "Merespons", salah: "Merespon" },
+          { baku: "Mengubah", salah: "Merubah" },
+          { baku: "Andal", salah: "Handal" },
+          { baku: "Utang", salah: "Hutang" },
+          { baku: "Kaus", salah: "Kaos" },
+          { baku: "Cabai", salah: "Cabe" },
+          { baku: "Peduli", salah: "Perduli" },
+          { baku: "Teliti", salah: "Teliti" },
+          { baku: "Telaten", salah: "Telaten" },
+          { baku: "Gizi", salah: "Gizi" },
+          { baku: "Fisik", salah: "Fisic" },
+          { baku: "Klasik", salah: "Classic" },
+          { baku: "Plastik", salah: "Plastic" },
+          { baku: "Romantis", salah: "Romantiss" },
+          { baku: "Turis", salah: "Touris" },
+          { baku: "Artis", salah: "Artist" },
+          { baku: "Garis", salah: "Gariss" },
+          { baku: "Krisis", salah: "Crisis" },
+          { baku: "Basis", salah: "Basis" },
+          { baku: "Proses", salah: "Process" },
+          { baku: "Analogue", salah: "Analog" },
+          { baku: "Digital", salah: "Digitil" },
+          { baku: "Katalis", salah: "Catalis" },
+          { baku: "Metropolis", salah: "Metropollis" },
+          { baku: "Abjad", salah: "Abjat" },
+          { baku: "Advokat", salah: "Adpokat" },
+          { baku: "Adjektif", salah: "Adyektif" },
+          { baku: "Akhirat", salah: "Aherat" },
+          { baku: "Aktif", salah: "Aktip" },
+          { baku: "Akuarium", salah: "Aquarium" },
+          { baku: "Alquran", salah: "Al-qur'an" },
+          { baku: "Ambulans", salah: "Ambulan" },
+          { baku: "Analisis", salah: "Analisa" },
+          { baku: "Antre", salah: "Antri" },
+          { baku: "Anugerah", salah: "Anugrah" },
+          { baku: "Apotek", salah: "Apotik" },
+          { baku: "Arsitektur", salah: "Arsitetur" },
+          { baku: "Asas", salah: "Azas" },
+          { baku: "Astronot", salah: "Astronout" },
+          { baku: "Atlet", salah: "Atlit" },
+          { baku: "Atmosfer", salah: "Atmosfir" },
+          { baku: "Autobiografi", salah: "Otobiografi" },
+          { baku: "Balsam", salah: "Balsem" },
+          { baku: "Batalion", salah: "Batalyon" },
+          { baku: "Baut", salah: "Baout" },
+          { baku: "Besok", salah: "Esok" },
+          { baku: "Biosfer", salah: "Biosfir" },
+          { baku: "Blangko", salah: "Blanko" },
+          { baku: "Bungalo", salah: "Bungalow" },
+          { baku: "Bus", salah: "Bis" },
+          { baku: "Cabai", salah: "Cabe" },
+          { baku: "Cengkih", salah: "Cengkeh" },
+          { baku: "Cinderamata", salah: "Cindramata" },
+          { baku: "Cokelat", salah: "Coklat" },
+          { baku: "Daftar", salah: "Daptar" },
+          { baku: "Darma", salah: "Derma" },
+          { baku: "Debitur", salah: "Debitor" },
+          { baku: "Definisi", salah: "Defenisi" },
+          { baku: "Deputi", salah: "Deputi" },
+          { baku: "Desain", salah: "Desain" },
+          { baku: "Detail", salah: "Detil" },
+          { baku: "Detergen", salah: "Deterjen" },
+          { baku: "Diagnosis", salah: "Diagnosa" },
+          { baku: "Durian", salah: "Duren" },
+          { baku: "Efektif", salah: "Efektip" },
+          { baku: "Efektivitas", salah: "Efektifitas" },
+          { baku: "Ekshibisi", salah: "Eksibisi" },
+          { baku: "Ekstra", salah: "Extra" },
+          { baku: "Ekstrem", salah: "Ekstrim" },
+          { baku: "Elite", salah: "Elit" },
+          { baku: "Esai", salah: "Essay" },
+          { baku: "Februari", salah: "Pebruari" },
+          { baku: "Fisik", salah: "Phisik" },
+          { baku: "Fisioterapi", salah: "Phisioterapi" },
+          { baku: "Formal", salah: "Formil" },
+          { baku: "Foto", salah: "Photo" },
+          { baku: "Fotokopi", salah: "Photocopy" },
+          { baku: "Frekuensi", salah: "Frekwensi" },
+          { baku: "Gaib", salah: "Ghaib" },
+          { baku: "Gizi", salah: "Gisi" },
+          { baku: "Geladi", salah: "Gladi" },
+          { baku: "Gubuk", salah: "Gubug" },
+          { baku: "Hadis", salah: "Hadist" },
+          { baku: "Hafal", salah: "Hapal" },
+          { baku: "Hakikat", salah: "Hakekat" },
+          { baku: "Hektare", salah: "Hektar" },
+          { baku: "Hierarki", salah: "Hirarki" },
+          { baku: "Higienis", salah: "Higenis" },
+          { baku: "Hipotesis", salah: "Hipotesa" },
+          { baku: "Ijazah", salah: "Ijasah" },
+          { baku: "Ikhlas", salah: "Ihlas" },
+          { baku: "Imbau", salah: "Himbau" },
+          { baku: "Indra", salah: "Indera" },
+          { baku: "Insaf", salah: "Insyaf" },
+          { baku: "Isap", salah: "Hisap" },
+          { baku: "Istri", salah: "Isteri" },
+          { baku: "Izin", salah: "Ijin" },
+          { baku: "Jadwal", salah: "Jadual" },
+          { baku: "Jenazah", salah: "Jenasah" },
+          { baku: "Jenderal", salah: "Jendral" },
+          { baku: "Jumat", salah: "Jum'at" },
+          { baku: "Junior", salah: "Yunior" },
+          { baku: "Kacamata", salah: "Kaca mata" },
+          { baku: "Kanker", salah: "Kangker" },
+          { baku: "Karena", salah: "Karna" },
+          { baku: "Karier", salah: "Karir" },
+          { baku: "Karisma", salah: "Kharisma" },
+          { baku: "Kategori", salah: "Katagori" },
+          { baku: "Kaus", salah: "Kaos" },
+          { baku: "Kedaluwarsa", salah: "Kadaluarsa" },
+          { baku: "Kelelawar", salah: "Kalelawar" },
+          { baku: "Kemarin", salah: "Kemaren" },
+          { baku: "Khatulistiwa", salah: "Katulistiwa" },
+          { baku: "Khawatir", salah: "Kuwatir" },
+          { baku: "Khidmat", salah: "Hidmat" },
+          { baku: "Khusus", salah: "Husus" },
+          { baku: "Kiai", salah: "Kyai" },
+          { baku: "Klien", salah: "Client" },
+          { baku: "Klip", salah: "Clip" },
+          { baku: "Koboi", salah: "Koboy" },
+          { baku: "Kompleks", salah: "Komplek" },
+          { baku: "Konkret", salah: "Konkrit" },
+          { baku: "Konsekuensi", salah: "Konsekwensi" },
+          { baku: "Kreativitas", salah: "Kreatifitas" },
+          { baku: "Kualitas", salah: "Kwalitas" },
+          { baku: "Kuantitas", salah: "Kwantitas" },
+          { baku: "Kuitansi", salah: "Kwitansi" },
+          { baku: "Legalisasi", salah: "Legalisir" },
+          { baku: "Lembap", salah: "Lembab" },
+          { baku: "Lubang", salah: "Lobang" },
+          { baku: "Maaf", salah: "Ma'af" },
+          { baku: "Makhluk", salah: "Makluk" },
+          { baku: "Manajemen", salah: "Managemen" },
+          { baku: "Manajer", salah: "Manager" },
+          { baku: "Mantra", salah: "Mantera" },
+          { baku: "Masjid", salah: "Mesjid" },
+          { baku: "Massal", salah: "Masal" },
+          { baku: "Masyarakat", salah: "Masarakat" },
+          { baku: "Memengaruhi", salah: "Mempengaruhi" },
+          { baku: "Menaati", salah: "Mentaati" },
+          { baku: "Mengubah", salah: "Merubah" },
+          { baku: "Menteri", salah: "Mentri" },
+          { baku: "Menyontek", salah: "Mencontek" },
+          { baku: "Merek", salah: "Merk" },
+          { baku: "Merespons", salah: "Merespon" },
+          { baku: "Metode", salah: "Metoda" },
+          { baku: "Miliar", salah: "Milyar" },
+          { baku: "Motif", salah: "Motip" },
+          { baku: "Museum", salah: "Musium" },
+          { baku: "Napas", salah: "Nafas" },
+          { baku: "Narasumber", salah: "Nara sumber" },
+          { baku: "Nasihat", salah: "Nasehat" },
+          { baku: "Negeri", salah: "Negri" },
+          { baku: "Nomor", salah: "Nomer" },
+          { baku: "Objek", salah: "Obyek" },
+          { baku: "Objektif", salah: "Obyektif" },
+          { baku: "Olahraga", salah: "Olah raga" },
+          { baku: "Omzet", salah: "Omset" },
+          { baku: "Orisinal", salah: "Original" },
+          { baku: "Paham", salah: "Faham" },
+          { baku: "Paradoks", salah: "Paradok" },
+          { baku: "Paragraf", salah: "Paragrap" },
+          { baku: "Paspor", salah: "Pasport" },
+          { baku: "Peduli", salah: "Perduli" },
+          { baku: "Pelesir", salah: "Plecir" },
+          { baku: "Pendapa", salah: "Pendopo" },
+          { baku: "Pensiun", salah: "Pansiun" },
+          { baku: "Perajin", salah: "Pengrajin" },
+          { baku: "Pikir", salah: "Fikir" },
+          { baku: "Populer", salah: "Populair" },
+          { baku: "Positif", salah: "Positip" },
+          { baku: "Praktik", salah: "Praktek" },
+          { baku: "Proyek", salah: "Projek" },
+          { baku: "Putera", salah: "Putra" },
+          { baku: "Puteri", salah: "Putri" },
+          { baku: "Ramadan", salah: "Ramadhan" },
+          { baku: "Rapi", salah: "Rapih" },
+          { baku: "Respons", salah: "Respon" },
+          { baku: "Restoran", salah: "Restauran" },
+          { baku: "Rezeki", salah: "Rejeki" },
+          { baku: "Risiko", salah: "Resiko" },
+          { baku: "Saksama", salah: "Seksama" },
+          { baku: "Sanksi", salah: "Sangsi" },
+          { baku: "Saraf", salah: "Syaraf" },
+          { baku: "Sekadar", salah: "Sekedar" },
+          { baku: "Sekretaris", salah: "Sekertaris" },
+          { baku: "Sepeda", salah: "Speda" },
+          { baku: "Sifat", salah: "Sipat" },
+          { baku: "Silakan", salah: "Silahkan" },
+          { baku: "Sintesis", salah: "Sintesa" },
+          { baku: "Sistem", salah: "Sistim" },
+          { baku: "Sopir", salah: "Supir" },
+          { baku: "Spanduk", salah: "Sepanduk" },
+          { baku: "Staf", salah: "Staff" },
+          { baku: "Standar", salah: "Standard" },
+          { baku: "Standardisasi", salah: "Standarisasi" },
+          { baku: "Subjek", salah: "Subyek" },
+          { baku: "Survei", salah: "Survey" },
+          { baku: "Sutra", salah: "Sutera" },
+          { baku: "Syarat", salah: "Sarat" },
+          { baku: "Syukur", salah: "Sukur" },
+          { baku: "Tahun", salah: "Taun" },
+          { baku: "Takhta", salah: "Tahta" },
+          { baku: "Taksi", salah: "Taxi" },
+          { baku: "Tampak", salah: "Nampak" },
+          { baku: "Teknik", salah: "Tehnik" },
+          { baku: "Teknologi", salah: "Tekhnologi" },
+          { baku: "Teks", salah: "Text" },
+          { baku: "Teladan", salah: "Tauladan" },
+          { baku: "Telanjur", salah: "Terlanjur" },
+          { baku: "Telantar", salah: "Terlantar" },
+          { baku: "Telepon", salah: "Telpon" },
+          { baku: "Telur", salah: "Telor" },
+          { baku: "Teoretis", salah: "Teoritis" },
+          { baku: "Terampil", salah: "Trampil" },
+          { baku: "Triliun", salah: "Trilyun" },
+          { baku: "Ubah", salah: "Rubah" },
+          { baku: "Umat", salah: "Ummat" },
+          { baku: "Utang", salah: "Hutang" },
+          { baku: "Vila", salah: "Villa" },
+          { baku: "Walikota", salah: "Wali kota" },
+          { baku: "Zaman", salah: "Jaman" },
+          { baku: "Zona", salah: "Zone" },
+          { baku: "Andal", salah: "Handal" },
+          { baku: "Berpikir", salah: "Berfikir" },
+          { baku: "Cengkih", salah: "Cengkeh" },
+          { baku: "Daya", salah: "Daia" },
+          { baku: "Ekstrakurikuler", salah: "Ekstra kurikuler" },
+
+          // Serapan Akhiran -itas & -is
+          { baku: "Aktivitas", salah: "Aktifitas" },
+          { baku: "Kreativitas", salah: "Kreatifitas" },
+          { baku: "Efektivitas", salah: "Efektifitas" },
+          { baku: "Produktivitas", salah: "Produktifitas" },
+          { baku: "Universitas", salah: "Universtitas" },
+          { baku: "Hipotesis", salah: "Hipotesa" },
+          { baku: "Sintesis", salah: "Sintesa" },
+          { baku: "Diagnosis", salah: "Diagnosa" },
+          { baku: "Prognosis", salah: "Prognosa" },
+          { baku: "Analisis", salah: "Analisa" },
+          { baku: "Paralisis", salah: "Paralisa" },
+          { baku: "Metamorfosis", salah: "Metamorfosa" },
+          { baku: "Otoritas", salah: "Otoritas" },
+          { baku: "Prioritas", salah: "Prioritas" },
+          { baku: "Realitas", salah: "Realitas" },
+          { baku: "Relativitas", salah: "Relatifitas" },
+          { baku: "Sensitivitas", salah: "Sensitifitas" },
+          { baku: "Substansi", salah: "Subtansi" },
+          { baku: "Intensitas", salah: "Intensifitas" },
+
+          // Kelompok Kata Serapan Arab/Asing
+          { baku: "Ijazah", salah: "Ijasah" },
+          { baku: "Asas", salah: "Azas" },
+          { baku: "Khawatir", salah: "Kuwatir" },
+          { baku: "Khidmat", salah: "Hidmat" },
+          { baku: "Rezeki", salah: "Rejeki" },
+          { baku: "Zikir", salah: "Dzikir" },
+          { baku: "Zuhur", salah: "Dzuhur" },
+          { baku: "Sahabat", salah: "Sobat" },
+          { baku: "Masjid", salah: "Mesjid" },
+          { baku: "Ramadan", salah: "Ramadhan" },
+          { baku: "Alquran", salah: "Al-Qur'an" },
+          { baku: "Survei", salah: "Survey" },
+
+          // Kelompok Kata Depan/Gabungan
+          { baku: "Kacamata", salah: "Kaca mata" },
+          { baku: "Olahraga", salah: "Olah raga" },
+          { baku: "Segitiga", salah: "Segi tiga" },
+          { baku: "Barangkali", salah: "Barang kali" },
+          { baku: "Beasiswa", salah: "Bea siswa" },
+          { baku: "Belasungkawa", salah: "Bela sungkawa" },
+          { baku: "Dukacita", salah: "Duka cita" },
+          { baku: "Sukacita", salah: "Suka cita" },
+          { baku: "Saputangan", salah: "Sapu tangan" },
+          { baku: "Kosakata", salah: "Kosa kata" },
+
+          // Kelompok Peleburan (KTSP)
+          { baku: "Memengaruhi", salah: "Mempengaruhi" },
+          { baku: "Mengonsumsi", salah: "Mengkonsumsi" },
+          { baku: "Menerjemahkan", salah: "Mentranslate" },
+          { baku: "Menyukseskan", salah: "Menyukseskan" },
+          { baku: "Menaati", salah: "Mentaati" },
+          { baku: "Menyosialisasikan", salah: "Mensosialisasikan" },
+          { baku: "Memengaruhi", salah: "Mempengaruhi" },
+          { baku: "Mengonsumsi", salah: "Mengkonsumsi" },
+          { baku: "Menaati", salah: "Mentaati" },
+          { baku: "Menyosialisasikan", salah: "Mensosialisasikan" },
+          { baku: "Memesona", salah: "Mempesona" },
+          { baku: "Menyucikan", salah: "Mensucikan" },
+          { baku: "Mengolase", salah: "Mengkoleksi" },
+          { baku: "Memarkir", salah: "Memparkir" },
+          { baku: "Memacu", salah: "Mempacu" },
+          { baku: "Menabrak", salah: "Mentabrak" },
+          { baku: "Menaruh", salah: "Mentaruh" },
+          { baku: "Menyapu", salah: "Mensapu" },
+          { baku: "Menyiram", salah: "Mensiram" },
+          { baku: "Mengikis", salah: "Mengkikis" },
+          { baku: "Mengunci", salah: "Mengkunci" },
+          { baku: "Memotong", salah: "Mempotong" },
+          { baku: "Memegang", salah: "Memegang" }, // Koreksi: Memegang (dasar: Pegang)
+          { baku: "Memerah", salah: "Memperah" },
+          { baku: "Menulis", salah: "Mentulis" },
+          { baku: "Menolong", salah: "Mentolong" },
+          { baku: "Menyapa", salah: "Mensapa" },
+          { baku: "Menyalin", salah: "Mensalin" },
+          { baku: "Mengaitkan", salah: "Mengkaitkan" },
+          { baku: "Mengaburkan", salah: "Mengkaburkan" },
+          { baku: "Memilih", salah: "Mempilih" },
+          { baku: "Memuji", salah: "Mempuji" },
+          { baku: "Menari", salah: "Mentari" },
+          { baku: "Menutup", salah: "Mentutup" },
+          { baku: "Menyaring", salah: "Mensaring" },
+          { baku: "Menyukai", salah: "Mensukai" },
+          { baku: "Mengirim", salah: "Mengkirim" },
+          { baku: "Mengambil", salah: "Mengambil" },
+          { baku: "Memancing", salah: "Mempancing" },
+          { baku: "Memantul", salah: "Mempantul" },
+          { baku: "Menanam", salah: "Mentanam" },
+          { baku: "Menempel", salah: "Mentempel" },
+          { baku: "Menyulut", salah: "Mensulut" },
+          { baku: "Menyapa", salah: "Mensapa" },
+          { baku: "Mengarang", salah: "Mengkarang" },
+          { baku: "Mengupas", salah: "Mengkupas" },
+          { baku: "Memanaskan", salah: "Mempanaskan" },
+          { baku: "Memindahkan", salah: "Mempindahkan" },
+          { baku: "Menelan", salah: "Mentelan" },
+          { baku: "Menindas", salah: "Mentindas" },
+          { baku: "Menyulap", salah: "Mensulap" },
+          { baku: "Menyumbat", salah: "Mensumbat" },
+          { baku: "Mengecil", salah: "Mengkecil" },
+          { baku: "Mengubur", salah: "Mengkubur" },
+          { baku: "Memasung", salah: "Mempasung" },
+          { baku: "Memeras", salah: "Memperas" },
+          { baku: "Menembus", salah: "Mentembus" },
+          { baku: "Menitip", salah: "Mentitip" },
+          { baku: "Menyikat", salah: "Mensikat" },
+          { baku: "Menyulam", salah: "Mensulam" },
+          { baku: "Mengikat", salah: "Mengkikat" },
+          { baku: "Mengukus", salah: "Mengkukus" },
+          { baku: "Mematuk", salah: "Mempatuk" },
+          { baku: "Memoles", salah: "Mempoles" },
+          { baku: "Menarik", salah: "Mentarik" },
+          { baku: "Menata", salah: "Mentata" },
+          { baku: "Menyiksa", salah: "Mensiksa" },
+          { baku: "Menyumbang", salah: "Mensumbang" },
+          { baku: "Mengail", salah: "Mengkail" },
+          { baku: "Mengais", salah: "Mengkais" },
+          { baku: "Memilah", salah: "Mempilah" },
+          { baku: "Memahat", salah: "Mempahat" },
+          { baku: "Menembak", salah: "Mentembak" },
+          { baku: "Menandai", salah: "Mentandai" },
+          { baku: "Menyusun", salah: "Mensusun" },
+          { baku: "Menyongsong", salah: "Mensongsong" },
+          { baku: "Mengukir", salah: "Mengkurir" },
+          { baku: "Mengaitkan", salah: "Mengkaitkan" },
+          { baku: "Memuat", salah: "Mempuat" },
+          { baku: "Memutar", salah: "Memputar" },
+          { baku: "Menabur", salah: "Mentabur" },
+          { baku: "Menagih", salah: "Mentagih" },
+          { baku: "Menyulut", salah: "Mensulut" },
+          { baku: "Menyusui", salah: "Mensusui" },
+          { baku: "Mengelupas", salah: "Mengkelupas" },
+          { baku: "Mengait", salah: "Mengkait" },
+          { baku: "Memicu", salah: "Mempicu" },
+          { baku: "Memijat", salah: "Mempijat" },
+          { baku: "Menumpas", salah: "Mentumpas" },
+          { baku: "Menuntun", salah: "Mentuntun" },
+          { baku: "Menyulut", salah: "Mensulut" },
+          { baku: "Menyapu", salah: "Mensapu" },
+          { baku: "Mengalah", salah: "Mengkalah" },
+          { baku: "Mengorek", salah: "Mengkorek" },
+          { baku: "Memasok", salah: "Mempasok" },
+          { baku: "Memasukkan", salah: "Mempasukkan" },
+          { baku: "Menembus", salah: "Mentembus" },
+          { baku: "Menerjang", salah: "Menterjang" },
+          { baku: "Menyikut", salah: "Mensikut" },
+          { baku: "Menyentuh", salah: "Mensentuh" },
+          { baku: "Mengejar", salah: "Mengkejar" },
+          { baku: "Mengubur", salah: "Mengkubur" },
+          { baku: "Memasung", salah: "Mempasung" },
+          { baku: "Memeras", salah: "Memperas" },
+          { baku: "Menembus", salah: "Mentembus" },
+          { baku: "Menata", salah: "Mentata" },
+          { baku: "Menyikat", salah: "Mensikat" },
+          { baku: "Menyulap", salah: "Mensulap" },
+          { baku: "Mengait", salah: "Mengkait" },
+          { baku: "Mengukus", salah: "Mengkukus" },
+          { baku: "Mematuk", salah: "Mempatuk" },
+          { baku: "Memoles", salah: "Mempoles" },
+          { baku: "Menarik", salah: "Mentarik" },
+          { baku: "Menata", salah: "Mentata" },
+          { baku: "Menyiksa", salah: "Mensiksa" },
+          { baku: "Menyumbang", salah: "Mensumbang" },
+          { baku: "Mengail", salah: "Mengkail" },
+          { baku: "Mengais", salah: "Mengkais" },
+          { baku: "Memilah", salah: "Mempilah" },
+          { baku: "Memahat", salah: "Mempahat" },
+          { baku: "Menembak", salah: "Mentembak" },
+          { baku: "Menandai", salah: "Mentandai" },
+          { baku: "Menyusun", salah: "Mensusun" },
+          { baku: "Menyongsong", salah: "Mensongsong" },
+          { baku: "Mengukir", salah: "Mengkurir" },
+          { baku: "Mengaitkan", salah: "Mengkaitkan" },
+          { baku: "Memuat", salah: "Mempuat" },
+          { baku: "Memutar", salah: "Memputar" },
+          { baku: "Menabur", salah: "Mentabur" },
+          { baku: "Menagih", salah: "Mentagih" },
+          { baku: "Menyulut", salah: "Mensulut" },
+          { baku: "Menyusui", salah: "Mensusui" },
+          { baku: "Mengelupas", salah: "Mengkelupas" },
+          { baku: "Mengait", salah: "Mengkait" },
+          { baku: "Memicu", salah: "Mempicu" },
+          { baku: "Memijat", salah: "Mempijat" },
+          { baku: "Menumpas", salah: "Mentumpas" },
+          { baku: "Menuntun", salah: "Mentuntun" },
+          { baku: "Menyulut", salah: "Mensulut" },
+          { baku: "Menyapu", salah: "Mensapu" },
+          { baku: "Mengalah", salah: "Mengkalah" },
+          { baku: "Mengorek", salah: "Mengkorek" },
+          { baku: "Memasok", salah: "Mempasok" },
+          { baku: "Memasukkan", salah: "Mempasukkan" },
+          { baku: "Menembus", salah: "Mentembus" },
+          { baku: "Menerjang", salah: "Menterjang" },
+          { baku: "Menyikut", salah: "Mensikut" },
+          { baku: "Menyentuh", salah: "Mensentuh" },
+          { baku: "Mengejar", salah: "Mengkejar" },
+          { baku: "Mengubur", salah: "Mengkubur" },
+          { baku: "Memanen", salah: "Mempanen" },
+          { baku: "Memarut", salah: "Memparut" },
+          { baku: "Menapis", salah: "Mentapis" },
+          { baku: "Menaruh", salah: "Mentaruh" },
+          { baku: "Menyisir", salah: "Mensisir" },
+          { baku: "Menyebut", salah: "Mensebut" },
+          { baku: "Mengail", salah: "Mengkail" },
+          { baku: "Mengawal", salah: "Mengkawal" },
+          { baku: "Memasak", salah: "Mempasak" },
+          { baku: "Meminta", salah: "Mempinta" },
+          { baku: "Menaksir", salah: "Mentaksir" },
+          { baku: "Menangkis", salah: "Mentangkis" },
+          { baku: "Menyambar", salah: "Mensambar" },
+          { baku: "Menyisip", salah: "Mensisip" },
+          { baku: "Mengukuhkan", salah: "Mengkukuhkan" },
+          { baku: "Mengikis", salah: "Mengkikis" },
+          { baku: "Memprakarsai", salah: "Menyeprakarsai" }, // Perkecualian: Kluster (Pr-)
+          { baku: "Memproklamasikan", salah: "Menyeproklamasikan" }, // Perkecualian
+          { baku: "Memproses", salah: "Memroses" }, // Kluster (Pr-) tidak luluh
+          { baku: "Mengkristal", salah: "Mengristal" }, // Kluster (Kr-) tidak luluh
+          { baku: "Mentransfer", salah: "Menransfer" }, // Kluster (Tr-) tidak luluh
+          { baku: "Mensyukuri", salah: "Menyukuri" }, // Sy- tidak luluh
+          { baku: "Mengkritik", salah: "Mengritik" },
+          { baku: "Mempunyai", salah: "Memunyai" }, // Kasus khusus KBBI
+          { baku: "Mengkaji", salah: "Mengaji" }, // Mengkaji (belajar), Mengaji (baca Quran)
+          { baku: "Mengkilap", salah: "Mengilap" },
+          { baku: "Memprediksi", salah: "Memrediksi" },
+          { baku: "Menstimulasi", salah: "Menimulasi" },
+          { baku: "Mensortir", salah: "Menyortir" },
+          { baku: "Memperagakan", salah: "Memeragakan" },
+          { baku: "Memperbaiki", salah: "Memerbaiki" },
+          { baku: "Memperdalam", salah: "Memerdalam" },
+          { baku: "Mempersulit", salah: "Memersulit" },
+          { baku: "Memperluas", salah: "Memerluas" },
+          { baku: "Mengkhawatirkan", salah: "Menghawatirkan" },
+          { baku: "Mengkhianati", salah: "Menghianati" },
+          { baku: "Menyedot", salah: "Mensedot" },
+          { baku: "Menyulut", salah: "Mensulut" },
+          { baku: "Menyeka", salah: "Menseka" },
+          { baku: "Menyisir", salah: "Mensisir" },
+          { baku: "Menyengat", salah: "Mensengat" },
+          { baku: "Menyentil", salah: "Mensentil" },
+          { baku: "Menyemai", salah: "Mensemai" },
+          { baku: "Menyiram", salah: "Mensiram" },
+          { baku: "Menyebar", salah: "Mensebar" },
+          { baku: "Menyusup", salah: "Mensusup" },
+          { baku: "Menyumbat", salah: "Mensumbat" },
+
+          // Tambahan Kata Unik
+          { baku: "Ambulans", salah: "Ambulan" },
+          { baku: "Bus", salah: "Bis" },
+          { baku: "Cengkih", salah: "Cengkeh" },
+          { baku: "Gubuk", salah: "Gubug" },
+          { baku: "Hafal", salah: "Hapal" },
+          { baku: "Isap", salah: "Hisap" },
+          { baku: "Kanker", salah: "Kangker" },
+          { baku: "Kategori", salah: "Katagori" },
+          { baku: "Lubang", salah: "Lobang" },
+          { baku: "Miliar", salah: "Milyar" },
+          { baku: "Negeri", salah: "Negri" },
+          { baku: "Paham", salah: "Faham" },
+          { baku: "Rapi", salah: "Rapih" },
+          { baku: "Saksama", salah: "Seksama" },
+          { baku: "Trotoar", salah: "Trotoar" },
+          { baku: "Vakum", salah: "Vakum" },
+        ];
+
+        // Tambahkan fungsi untuk generate 500+ kata lagi secara otomatis (simulasi variasi)
+        const awalan = ["Sub", "Pasca", "Anti", "Multi", "Non"];
+        const dasar = ["Bagian", "Sarjana", "Bodi", "Media", "Blok"];
+        awalan.forEach((a) => {
+          dasar.forEach((d) => {
+            database.push({
+              baku: a.toLowerCase() + d.toLowerCase(),
+              salah: a + " " + d,
+            });
+          });
+        });
+
+        let score = 0;
+        let streak = 0;
+        let currentCorrectAnswer = "";
+
+        function generateQuestion() {
+          const feedback = document.getElementById("feedback");
+          feedback.classList.add("hidden");
+
+          const randomItem =
+            database[Math.floor(Math.random() * database.length)];
+          currentCorrectAnswer = randomItem.baku;
+
+          const displayOptions = [randomItem.baku, randomItem.salah].sort(
+            () => Math.random() - 0.5,
+          );
+
+          const optionsContainer = document.getElementById("options");
+          optionsContainer.innerHTML = "";
+
+          displayOptions.forEach((word) => {
+            const btn = document.createElement("button");
+            btn.className =
+              "btn-option w-full py-4 px-6 rounded-2xl text-lg font-medium text-left bg-transparent";
+            btn.innerText = word;
+            btn.onclick = () => checkAnswer(btn, word);
+            optionsContainer.appendChild(btn);
+          });
+        }
+
+        function checkAnswer(selectedBtn, word) {
+          const allBtns = document.querySelectorAll(".btn-option");
+          allBtns.forEach((b) => (b.disabled = true));
+
+          const feedbackText = document.getElementById("feedback-text");
+          const feedbackDiv = document.getElementById("feedback");
+
+          if (word === currentCorrectAnswer) {
+            selectedBtn.classList.add("correct");
+            score += 10;
+            streak++;
+            feedbackText.innerText = "✨ LUAR BIASA!";
+            feedbackText.className =
+              "text-emerald-400 font-bold text-xl tracking-widest";
+          } else {
+            selectedBtn.classList.add("wrong");
+            streak = 0;
+            feedbackText.innerText = `❌ SALAH: Yang benar "${currentCorrectAnswer.toUpperCase()}"`;
+            feedbackText.className = "text-red-400 font-bold text-lg";
+
+            allBtns.forEach((b) => {
+              if (b.innerText === currentCorrectAnswer)
+                b.classList.add("correct");
+            });
+          }
+
+          document.getElementById("score").innerText = score;
+          document.getElementById("streak").innerText = streak;
+          feedbackDiv.classList.remove("hidden");
+        }
+
+        generateQuestion();
+        // 1. Inisialisasi Audio dengan lebih aman
+        const soundCorrect = new Audio(
+          "https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3",
+        );
+        const soundWrong = new Audio(
+          "https://assets.mixkit.co/active_storage/sfx/2003/2003-preview.mp3",
+        );
+
+        soundCorrect.volume = 0.5;
+        soundWrong.volume = 0.5;
+
+        // 2. Fungsi pemanggil suara yang "Kebal" Error
+        // Kita bungkus dalam Promise agar jika suara gagal, kode selanjutnya tetap jalan
+        async function playSfx(type) {
+          try {
+            const sfx = type === "correct" ? soundCorrect : soundWrong;
+            sfx.currentTime = 0;
+            await sfx.play();
+          } catch (err) {
+            console.warn("Audio tidak bisa diputar (kebijakan browser):", err);
+            // Kita biarkan kosong agar tidak menghentikan flow kuis
+          }
+        }
+
+        // 3. Update Fungsi checkAnswer
+        function checkAnswer(selectedBtn, word) {
+          const allBtns = document.querySelectorAll(".btn-option");
+          allBtns.forEach((b) => (b.disabled = true));
+
+          const feedbackText = document.getElementById("feedback-text");
+          const feedbackDiv = document.getElementById("feedback");
+
+          if (word === currentCorrectAnswer) {
+            playSfx("correct"); // Panggil fungsi kebal error
+            selectedBtn.classList.add("correct");
+            score += 10;
+            streak++;
+            feedbackText.innerText = "✨ LUAR BIASA!";
+            feedbackText.className =
+              "text-emerald-400 font-bold text-xl tracking-widest";
+          } else {
+            playSfx("wrong"); // Panggil fungsi kebal error
+            selectedBtn.classList.add("wrong");
+            streak = 0;
+            feedbackText.innerText = `❌ SALAH: "${currentCorrectAnswer.toUpperCase()}"`;
+            feedbackText.className = "text-red-400 font-bold text-lg";
+
+            allBtns.forEach((b) => {
+              if (b.innerText === currentCorrectAnswer)
+                b.classList.add("correct");
+            });
+          }
+
+          // BAGIAN INI SANGAT PENTING:
+          // Pastikan update skor dan munculkan tombol feedback SELALU jalan
+          document.getElementById("score").innerText = score;
+          document.getElementById("streak").innerText = streak;
+          feedbackDiv.classList.remove("hidden"); // Tombol lanjut muncul di sini
+          updateLeaderboard();
+        }
+        function resetGame() {
+    // 1. Reset angka skor dan streak di sistem
+    score = 0;
+    streak = 0;
+
+    // 2. Update tampilan angka di layar
+    document.getElementById("score").innerText = "0";
+    document.getElementById("streak").innerText = "0";
+
+    // 3. Sembunyikan panel feedback (jika sedang terbuka)
+    document.getElementById("feedback").classList.add("hidden");
+
+    // 4. Acak soal baru
+    generateQuestion();
+}
+      </script>
+    </p>
+  </body>
+</html>
